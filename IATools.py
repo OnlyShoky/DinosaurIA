@@ -25,8 +25,71 @@ def calcul_distance(first_object,second_object):
 
     return position_SO.x - position_FO.x
 
+def getLineOfpixels(im, xy, width):
+    """
+    Returns the lists of pixels values at a given position.
+
+    :param xy: The coordinate, given as (x, y). See
+       :ref:`coordinate-system`.
+    :returns: The pixel value.  If the image is a multi-layer image,
+       this method returns a tuple.
+    """
+
+    listsPixels = []
+
+    for i in range(width):
+        listsPixels.append(im.getpixel( (xy[0]+i,xy[1]) ))
+
+    return listsPixels
+
+def detectTypeOfObject(listLow,listHigh):
+    blackZoneLow = False
+    blackZoneHigh = False
+
+    whitePixel = (255,255,255)
+
+    nbBulks = 0
+    nbCactus = 0
+    for i in range(listLow.__len__()):
+
+        if(listLow[i] != whitePixel and blackZoneLow != True):
+            blackZoneLow = True
+
+        if (listHigh[i] != whitePixel and blackZoneHigh != True):
+            blackZoneHigh = True
+
+        if(listLow[i] == whitePixel and blackZoneLow == True):
+            blackZoneLow = False
+            if(blackZoneHigh!= True):
+                nbBulks = nbBulks +1
+            else:
+                nbCactus = nbCactus + 1
+
+        if (listHigh[i] == whitePixel and blackZoneHigh == True and blackZoneLow == False):
+            blackZoneHigh = False
+
+    return round(nbBulks/2),nbCactus
+
+
+
 def stateMachine_Detections():
     print("detection state machine")
+    sensorLow = pyautogui.position(x=1627, y=870)
+    sensorHigh = pyautogui.position(x=1627, y=848)
+
+    width = 700
+
+    while(1):
+
+        im = pyautogui.screenshot()
+
+        l_pxSensorLow = getLineOfpixels(im,(sensorLow[0] - width , sensorLow[1]) , width)
+        l_pxSensorHigh = getLineOfpixels(im,(sensorHigh[0] - width , sensorHigh[1]) , width)
+
+        nbBulks,nbCactus = detectTypeOfObject(l_pxSensorLow,l_pxSensorHigh)
+
+        print("Number of bulks = "+ str(nbBulks) +" Number of Cactus = "  + str(nbCactus))
+
 
 def update(region,state):
 

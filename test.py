@@ -46,3 +46,13 @@ for x in range(20):
 
     print("Dino pos :", dino)
     print("Cactus pos :", cactus)
+
+start = time.time()
+im = pyautogui.screenshot()
+px = im.getpixel((0, 0))
+print("Time of execution .", str(time.time() - start))
+
+start = time.time()
+im = pyautogui.screenshot(region=(1627,870,1,1))
+px = im.getpixel((0, 0))
+print("Time of execution .", str(time.time() - start))
